@@ -2,4 +2,8 @@ why we need next js?
     - in react first js load hota hai or vo html ke page ko paint karta hai, iss process me time lagta hai
     - in react no js load, then no page will be seen and google bots do not rank it high
 
-    - next js ne yeh problem solve ki like usne yeh website service site pe load karke as a html format me hi bhejta, kaam se kaam static page toh show hoga or phir just kuch time baad vo clickable bhi ban jayega    
+    - next js ne yeh problem solve ki like usne yeh website service site pe load karke as a html format me hi bhejta, kaam se kaam static page toh show hoga or phir just kuch time baad vo clickable bhi ban jayega 
+
+    - eslint - pehle se hi problem bta deta hai aapke code me red line deke
+
+    - level 1 we understand about next js and its folder structure basically intro to next js.
