@@ -13,3 +13,7 @@ Level 1 -
 Level 2 - 
 
     - only making folder name can not make its route and file name should be page.js only for route making, any other page name can not make it route
+    - routes, nested routes and all type of dynamic routes
+    - loading, not-found, default, etc...
+
+Level 3 -
