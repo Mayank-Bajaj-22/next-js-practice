@@ -17,3 +17,6 @@ Level 2 -
     - loading, not-found, default, etc...
 
 Level 3 -
+
+    - image otimization 
+    - fonts
