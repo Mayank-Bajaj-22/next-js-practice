@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import connectDB from "./db";
 import User from "@/model/user.model";
 import bcrypt from "bcryptjs";
+import Google from "next-auth/providers/google";
 
 const authOptions: NextAuthOptions = {
     providers: [
@@ -46,9 +47,30 @@ const authOptions: NextAuthOptions = {
                     image: user.image
                 }
             }
+        }),
+
+        Google({
+            clientId: process.env.CLIENT_ID!,
+            clientSecret: process.env.CLIENT_SECRET!
         })
     ],
     callbacks: {
+
+        async signIn({ account, user }) {
+            if (account?.provider === "google") {
+                await connectDB();
+
+                let existUser = await User.findOne({ email: user?.email })
+                if (!existUser) {
+                    existUser = await User.create({
+                        name: user.name,
+                        email: user?.email
+                    })
+                }
+                user.id = existUser._id as string
+            }
+            return true
+        },
         // jwt yeh karta hai jo upar likha usko token me return karta hai or vo cookies me store hota hai - abhi tak usme created at or expiry time likha hai ab hum kuch logic likhenge jiski awajah se user ki kuch or info add karenge token me
         async jwt({ token, user }) {
             if (user) {
@@ -88,3 +110,5 @@ export default authOptions;
 // token generate
 // token ke andar user details daal di
 // session ke andar user ki detail daalni hai from token
+
+// next-auth - signIn and signOut karega baas
