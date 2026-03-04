@@ -1,6 +1,6 @@
 "use client"
 
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation"
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
@@ -10,16 +10,15 @@ export default function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const router = useRouter()
-    const session = useSession()
-    console.log(session?.data?.user)
 
     const handleSignIn = async (e: React.SyntheticEvent) => {
         e.preventDefault()
         try {
             const result = await signIn('credentials', {
-                email, password
+                email, password, redirect: false
             })
             console.log(result)
+            router.push("/")
         } catch (error) {
             console.log(error)
         }
@@ -72,7 +71,11 @@ export default function Login() {
                     <hr className="grow border-gray-500" />
                 </div>
 
-                <button className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-400 rounded-lg bg-white text-black hover:bg-gray-100 transition-colors">
+                <button className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-400 rounded-lg bg-white text-black hover:bg-gray-100 transition-colors" onClick={ async () => 
+                    await signIn("google", {
+                        callbackUrl: "/"
+                    })
+                    }>
                     <FcGoogle className="w-6 h-6" />
                     <span className="font-semibold text-gray-900">
                         Sign Up With Google
