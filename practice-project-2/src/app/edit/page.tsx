@@ -1,13 +1,16 @@
 "use client"
 
+import { userDataContext } from "@/context/UserContext";
+import axios from "axios";
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 
 export default function Edit() {
 
-    const { data } = useSession()
+    // const { data } = useSession()
+    const data = useContext(userDataContext)
     const [name, setName] = useState("")
     const [loading, setLoading]=useState(false)
     const [frontendImage, setFrontendImage]=useState("")
@@ -22,10 +25,29 @@ export default function Edit() {
         setFrontendImage(URL.createObjectURL(file))
     }
 
+    const handleEdit = async (e: React.SyntheticEvent) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+            const formData = new FormData()
+            formData.append("name", name)
+
+            if (backendImage) {
+                formData.append("file", backendImage)
+            }
+            const result = await axios.post('/api/edit',formData)
+            setLoading(false)
+            data?.setUser(result.data)
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
+    }
+
     useEffect(() => {
         if (data) {
-            setName(data?.user.name as string)
-            setFrontendImage(data.user.image as string)
+            setName(data?.user?.name as string)
+            setFrontendImage(data.user?.image as string)
         }
     }, [data])
 
@@ -36,7 +58,7 @@ export default function Edit() {
                     Edit Profile
                 </h1>
 
-                <form className="space-y-2 flex flex-col w-full items-center">
+                <form className="space-y-2 flex flex-col w-full items-center" onSubmit={handleEdit}>
                     <div className="w-25 h-25 rounded-full border-2 flex justify-center items-center border-white transition-all hover:border-blue-500 text-white hover:text-blue-500 cursor-pointer overflow-hidden relative" onClick={() => imageInput.current?.click()}>
                         <input type="file" accept="image/*" hidden ref={imageInput} onChange={handleImage} />
                         {
@@ -56,8 +78,8 @@ export default function Edit() {
                         />
                     </div>
 
-                    <button className="w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors mt-4">
-                        Save
+                    <button className="w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors mt-4" disabled={loading}>
+                        { loading ? "Saving..." : "Save" }
                     </button>
                 </form>
             </div>

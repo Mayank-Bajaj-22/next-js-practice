@@ -1,15 +1,13 @@
 import authOptions from "@/lib/auth";
-import uploadOnCloudinary from "@/lib/cloudinary";
 import connectDB from "@/lib/db";
 import User from "@/model/user.model";
-import { stat } from "fs";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
     try {
         await connectDB();
-        const session = await getServerSession(authOptions) // frontend wale session ko iss tarah hum bakend me access akrte hai just this one line
+        const session = await getServerSession(authOptions)
         if (!session || !session.user.email || !session.user.id) {
             return NextResponse.json(
                 {
@@ -21,20 +19,7 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        // image ko hum formdata ke form me bhejte ya base 64
-        const formData = req.formData()
-        const name = (await formData).get("name") as string
-        const file = (await formData).get("file") as Blob | null
-
-        let imageUrl;
-        if (file) {
-            imageUrl = await uploadOnCloudinary(file)
-        }
-
-        const user = await User.findByIdAndUpdate(session.user.id, {
-            name, image: imageUrl
-        }, { new: true })
-
+        const user = await User.findById(session.user.id).select("-password")
         if (!user) {
             return NextResponse.json(
                 {
@@ -52,13 +37,14 @@ export async function POST(req: NextRequest) {
                 status: 200
             }
         )
+        
     } catch (error) {
         return NextResponse.json(
             {
-                message: `edit error ${error}`
+                message: `user error ${error}`
             },
             {
-                status: 500
+                status: 400
             }
         )
     }

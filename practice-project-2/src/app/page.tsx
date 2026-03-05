@@ -1,14 +1,18 @@
 "use client";
 
+import { userDataContext } from "@/context/UserContext";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { HiPencil } from "react-icons/hi2";
 
 export default function Home() {
-  const { data } = useSession();
-  console.log(data);
+  // const { data } = useSession();
+  // console.log(data);
+
+  const data = useContext(userDataContext)
+  console.log(data)
   const router = useRouter();
   const [loading, setLoading] = useState(false)
 
@@ -36,7 +40,7 @@ export default function Home() {
 
           {
             data.user?.image && <div className="relative w-50 h-50 rounded-full border-2 border-white overflow-hidden">
-              <Image src={data.user.image} fill alt='userImage' />
+              <Image src={data.user?.image} fill alt='userImage' />
             </div>
           }
 
